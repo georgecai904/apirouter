@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.2.4] - 2025-12-23
+
+### Changed
+- **SoraGen API Logic**:
+  - 调整 `submit` 接口逻辑：`style` 和 `productSeed` 参数变更为**可选**。
+  - 若参数缺失或数据库中未找到对应记录，系统不再报错 (400/404)，而是将对应的 Prompt (Prompt A / Prompt B) 默认为空字符串。
+
 ## [v0.2.3] - 2025-12-23
 
 ### Added

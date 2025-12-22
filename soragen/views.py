@@ -49,21 +49,28 @@ def submit(request):
         remix_target_id = data.get('remixTargetld') # Keeping strictly as user wrote: remixTargetld
 
         if not style or not product_seed:
-            return JsonResponse({'error': 'Missing style or productSeed'}, status=400)
+            # return JsonResponse({'error': 'Missing style or productSeed'}, status=400)
+            pass
 
         # 1. Get promptA
-        try:
-            style_obj = SoraGenStyle.objects.get(style=style)
-            prompt_a = style_obj.promptA
-        except SoraGenStyle.DoesNotExist:
-            return JsonResponse({'error': f'Style not found: {style}'}, status=404)
+        prompt_a = ""
+        if style:
+            try:
+                style_obj = SoraGenStyle.objects.get(style=style)
+                prompt_a = style_obj.promptA
+            except SoraGenStyle.DoesNotExist:
+                # return JsonResponse({'error': f'Style not found: {style}'}, status=404)
+                prompt_a = ""
 
         # 2. Get promptB
-        try:
-            seed_obj = SoraGenProductSeed.objects.get(productSeed=product_seed)
-            prompt_b = seed_obj.promptB
-        except SoraGenProductSeed.DoesNotExist:
-            return JsonResponse({'error': f'ProductSeed not found: {product_seed}'}, status=404)
+        prompt_b = ""
+        if product_seed:
+            try:
+                seed_obj = SoraGenProductSeed.objects.get(productSeed=product_seed)
+                prompt_b = seed_obj.promptB
+            except SoraGenProductSeed.DoesNotExist:
+                # return JsonResponse({'error': f'ProductSeed not found: {product_seed}'}, status=404)
+                prompt_b = ""
 
         # 3. Concatenate
         final_prompt = f"""{prompt_a}
