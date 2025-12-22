@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoraGen API Test Panel</title>
+    <style>
+        :root {
+            --bg-color: #f5f5f7;
+            --card-bg: #ffffff;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent-color: #007aff;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.04);
+            --font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 40px 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 20px;
+            border-bottom: 1px solid #e5e5ea;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d1d6;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background: #fafafa;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+            background: #fff;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .response-area {
+            margin-top: 20px;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: "SF Mono", Menlo, Monaco, Consolas, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            display: none;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .badge-post { background: #e8f5e9; color: #2e7d32; }
+        .badge-get { background: #e3f2fd; color: #1565c0; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SoraGen API 控制台</h1>
+
+    <div class="card" style="margin-bottom: 20px; padding: 15px;">
+        <div class="form-group" style="margin-bottom: 0;">
+            <label>Global API Key (Saved locally)</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="globalApiKey" placeholder="Set your API Key here" style="flex: 1;">
+                <button type="button" id="saveKeyBtn" style="width: auto;">Save & Auto-fill</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit API -->
+    <div class="card">
+        <h2>Submit API <span class="badge badge-post">POST</span></h2>
+        <form id="submitForm">
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="text" name="key" class="api-key-input" placeholder="Enter your API Key" required>
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Style (from DB)</label>
+                    <select name="style" required>
+                        <option value="">-- Select Style --</option>
+                        {% for style in styles %}
+                        <option value="{{ style.style }}">{{ style.style }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Product Seed (from DB)</label>
+                    <select name="productSeed" required>
+                        <option value="">-- Select Product Seed --</option>
+                        {% for seed in seeds %}
+                        <option value="{{ seed.productSeed }}">{{ seed.productSeed }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Prompt</label>
+                <textarea name="prompt" rows="3" placeholder="Additional prompt..."></textarea>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>URL</label>
+                    <input type="text" name="url" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                    <label>Aspect Ratio</label>
+                    <select name="aspectRatio">
+                        <option value="9:16" selected>9:16 (Default)</option>
+                        <option value="16:9">16:9</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Duration</label>
+                    <select name="duration">
+                        <option value="10" selected>10s (Default)</option>
+                        <option value="15">15s</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Size</label>
+                    <select name="size">
+                        <option value="small" selected>small (Default)</option>
+                        <option value="large">large</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Remix Target ID</label>
+                <input type="text" name="remixTargetld" placeholder="Optional ID">
+            </div>
+
+            <button type="submit">发送请求 (Submit)</button>
+        </form>
+        <div id="submitResponse" class="response-area"><pre></pre></div>
+    </div>
+
+    <!-- Detail API -->
+    <div class="card">
+        <h2>Detail API <span class="badge badge-get">GET</span></h2>
+        <form id="detailForm">
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="text" name="key" class="api-key-input" placeholder="Enter your API Key" required>
+                </div>
+                <div class="form-group">
+                    <label>Task ID</label>
+                    <input type="text" name="id" placeholder="Task ID" required>
+                </div>
+            </div>
+            <button type="submit">查询详情 (Detail)</button>
+        </form>
+        <div id="detailResponse" class="response-area"><pre></pre></div>
+    </div>
+</div>
+
+<script>
+    const globalKeyInput = document.getElementById('globalApiKey');
+    const formKeyInputs = document.querySelectorAll('.api-key-input');
+
+    // 3. Auto-sync inputs when typing in global
+    function syncKeys() {
+        const val = globalKeyInput.value;
+        formKeyInputs.forEach(input => input.value = val);
+    }
+    
+    globalKeyInput.addEventListener('input', syncKeys);
+    globalKeyInput.addEventListener('change', syncKeys);
+    globalKeyInput.addEventListener('paste', () => setTimeout(syncKeys, 0)); // Handle paste events
+
+    document.getElementById('submitForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const responseArea = document.getElementById('submitResponse');
+        const pre = responseArea.querySelector('pre');
+        
+        // Prepare data
+        const formData = new FormData(form);
+        const key = formData.get('key');
+        const data = {};
+        formData.forEach((value, key) => {
+            if (key !== 'key') data[key] = value;
+        });
+
+        // Show loading
+        responseArea.style.display = 'block';
+        pre.textContent = 'Loading...';
+
+        try {
+            const res = await fetch(`/soragen/submit?key=${encodeURIComponent(key)}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            const result = await res.json();
+            pre.textContent = JSON.stringify(result, null, 2);
+        } catch (err) {
+            pre.textContent = 'Error: ' + err.message;
+        }
+    });
+
+    document.getElementById('detailForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const responseArea = document.getElementById('detailResponse');
+        const pre = responseArea.querySelector('pre');
+        
+        const formData = new FormData(form);
+        const key = formData.get('key');
+        const id = formData.get('id');
+
+        responseArea.style.display = 'block';
+        pre.textContent = 'Loading...';
+
+        try {
+            const res = await fetch(`/soragen/detail?key=${encodeURIComponent(key)}&id=${encodeURIComponent(id)}`);
+            const result = await res.json();
+            pre.textContent = JSON.stringify(result, null, 2);
+        } catch (err) {
+            pre.textContent = 'Error: ' + err.message;
+        }
+    });
+</script>
+
+</body>
+</html>
