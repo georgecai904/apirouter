@@ -43,10 +43,10 @@ def submit(request):
         
         # Other params
         url = data.get('url')
-        aspect_ratio = data.get('aspectRatio')
-        duration = data.get('duration')
-        size = data.get('size')
-        remix_target_id = data.get('remixTargetld') # Keeping strictly as user wrote: remixTargetld
+        aspect_ratio = data.get('aspectRatio', '')
+        duration = data.get('duration', '')
+        size = data.get('size', '')
+        remix_target_id = data.get('remixTargetld', '') # Keeping strictly as user wrote: remixTargetld
 
         if not style or not product_seed:
             # return JsonResponse({'error': 'Missing style or productSeed'}, status=400)

@@ -1,5 +1,12 @@
 # Changelog
 
+## [v0.2.5] - 2025-12-23
+
+### Added
+- **跨域访问 (CORS)**:
+  - 引入 `django-cors-headers` 并在 `INSTALLED_APPS` 与 `MIDDLEWARE` 中启用。
+  - 允许域名 `https://apirouter.aibox.uno` 进行跨域访问，支持 `GET/POST/OPTIONS`。
+
 ## [v0.2.4] - 2025-12-23
 
 ### Changed
@@ -50,3 +57,4 @@
   - 配置数据库连接 (SQLite 兼容模式)。
   - 实现 `submit` (POST) 和 `detail` (GET) 接口逻辑。
   - 集成 Apple Design 风格的基础 UI 模板。
+
