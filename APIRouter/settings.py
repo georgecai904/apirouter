@@ -126,6 +126,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CORS
 CORS_ALLOWED_ORIGINS = [
-    'https://apirouter.aibox.uno',
+    'https://*.aibox.uno',
 ]
 CORS_ALLOW_METHODS = ['GET', 'POST', 'OPTIONS']
